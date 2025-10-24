@@ -1,96 +1,77 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Pagination from '@mui/material/Pagination';
+import { Box, Button, Typography } from '@mui/material';
 
-import { DashboardContent } from 'src/layouts/dashboard';
+export function BlogView() {
+  const [noPosition, setNoPosition] = useState({ top: '50%', left: '50%' });
+  const [showCongrats, setShowCongrats] = useState(false);
 
-import { Iconify } from 'src/components/iconify';
+  const handleNoClick = () => {
+    // Gera posição aleatória para o botão 'Não'
+    const top = Math.floor(Math.random() * 80) + 10 + '%';
+    const left = Math.floor(Math.random() * 80) + 10 + '%';
+    setNoPosition({ top, left });
+  };
 
-import { PostItem } from '../post-item';
-import { PostSort } from '../post-sort';
-import { PostSearch } from '../post-search';
+  const handleYesClick = () => {
+    setShowCongrats(true);
+  };
 
-import type { IPostItem } from '../post-item';
-
-// ----------------------------------------------------------------------
-
-type Props = {
-  posts: IPostItem[];
-};
-
-export function BlogView({ posts }: Props) {
-  const [sortBy, setSortBy] = useState('latest');
-
-  const handleSort = useCallback((newSort: string) => {
-    setSortBy(newSort);
-  }, []);
+  if (showCongrats) {
+    return (
+      <Box
+        sx={{
+          height: '100vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'column',
+        }}
+      >
+        <Typography variant="h2" color="primary">
+          Parabéns! 💖
+        </Typography>
+        <Typography variant="h5">Você disse sim! 🥰</Typography>
+      </Box>
+    );
+  }
 
   return (
-    <DashboardContent>
-      <Box
-        sx={{
-          mb: 5,
-          display: 'flex',
-          alignItems: 'center',
-        }}
-      >
-        <Typography variant="h4" sx={{ flexGrow: 1 }}>
-          Blog
-        </Typography>
+    <Box
+      sx={{
+        height: '100vh',
+        position: 'relative',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+        gap: 3,
+      }}
+    >
+      <Typography variant="h4">Me daria seu anel?</Typography>
+      <Box sx={{ position: 'relative', width: '100%', height: '100px' }}>
         <Button
           variant="contained"
-          color="inherit"
-          startIcon={<Iconify icon="mingcute:add-line" />}
+          color="success"
+          onClick={handleYesClick}
+          sx={{ mr: 2 }}
         >
-          New post
+          Sim
+        </Button>
+        <Button
+          variant="contained"
+          color="error"
+          onClick={handleNoClick}
+          sx={{
+            position: 'absolute',
+            top: noPosition.top,
+            left: noPosition.left,
+            transition: '0.2s',
+          }}
+        >
+          Não
         </Button>
       </Box>
-
-      <Box
-        sx={{
-          mb: 5,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <PostSearch posts={posts} />
-        <PostSort
-          sortBy={sortBy}
-          onSort={handleSort}
-          options={[
-            { value: 'latest', label: 'Latest' },
-            { value: 'popular', label: 'Popular' },
-            { value: 'oldest', label: 'Oldest' },
-          ]}
-        />
-      </Box>
-
-      <Grid container spacing={3}>
-        {posts.map((post, index) => {
-          const latestPostLarge = index === 0;
-          const latestPost = index === 1 || index === 2;
-
-          return (
-            <Grid
-              key={post.id}
-              size={{
-                xs: 12,
-                sm: latestPostLarge ? 12 : 6,
-                md: latestPostLarge ? 6 : 3,
-              }}
-            >
-              <PostItem post={post} latestPost={latestPost} latestPostLarge={latestPostLarge} />
-            </Grid>
-          );
-        })}
-      </Grid>
-
-      <Pagination count={10} color="primary" sx={{ mt: 8, mx: 'auto' }} />
-    </DashboardContent>
+    </Box>
   );
 }
