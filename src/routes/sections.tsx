@@ -41,6 +41,14 @@ const renderFallback = () => (
 
 export const routesSection: RouteObject[] = [
   {
+    index: true,
+    element: (
+      <AuthLayout>
+        <SignInPage />
+      </AuthLayout>
+    ),
+  },
+  {
     element: (
       <DashboardLayout>
         <Suspense fallback={renderFallback()}>
@@ -49,19 +57,11 @@ export const routesSection: RouteObject[] = [
       </DashboardLayout>
     ),
     children: [
-      { index: true, element: <DashboardPage /> },
+      { path: 'dashboard', element: <DashboardPage /> },
       { path: 'user', element: <UserPage /> },
       { path: 'products', element: <ProductsPage /> },
       { path: 'blog', element: <BlogPage /> },
     ],
-  },
-  {
-    path: 'sign-in',
-    element: (
-      <AuthLayout>
-        <SignInPage />
-      </AuthLayout>
-    ),
   },
   {
     path: '404',
@@ -69,3 +69,4 @@ export const routesSection: RouteObject[] = [
   },
   { path: '*', element: <Page404 /> },
 ];
+
