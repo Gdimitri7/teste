@@ -1,152 +1,171 @@
-import { useState, useCallback } from 'react';
+// src/views/ExpensesView.tsx
+import { useState, useEffect, useCallback } from 'react';
 
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Pagination from '@mui/material/Pagination';
-import Typography from '@mui/material/Typography';
-
-import { _products } from 'src/_mock';
-import { DashboardContent } from 'src/layouts/dashboard';
-
-import { ProductItem } from '../product-item';
-import { ProductSort } from '../product-sort';
-import { CartIcon } from '../product-cart-widget';
-import { ProductFilters } from '../product-filters';
-
-import type { FiltersProps } from '../product-filters';
-
-// ----------------------------------------------------------------------
-
-const GENDER_OPTIONS = [
-  { value: 'men', label: 'Men' },
-  { value: 'women', label: 'Women' },
-  { value: 'kids', label: 'Kids' },
-];
-
-const CATEGORY_OPTIONS = [
-  { value: 'all', label: 'All' },
-  { value: 'shose', label: 'Shose' },
-  { value: 'apparel', label: 'Apparel' },
-  { value: 'accessories', label: 'Accessories' },
-];
-
-const RATING_OPTIONS = ['up4Star', 'up3Star', 'up2Star', 'up1Star'];
-
-const PRICE_OPTIONS = [
-  { value: 'below', label: 'Below $25' },
-  { value: 'between', label: 'Between $25 - $75' },
-  { value: 'above', label: 'Above $75' },
-];
-
-const COLOR_OPTIONS = [
-  '#00AB55',
-  '#000000',
-  '#FFFFFF',
-  '#FFC0CB',
-  '#FF4842',
-  '#1890FF',
-  '#94D82D',
-  '#FFC107',
-];
-
-const defaultFilters = {
-  price: '',
-  gender: [GENDER_OPTIONS[0].value],
-  colors: [COLOR_OPTIONS[4]],
-  rating: RATING_OPTIONS[0],
-  category: CATEGORY_OPTIONS[0].value,
-};
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Table,
+  TableHead,
+  TableBody,
+  TableCell,
+  TableRow,
+  Paper,
+} from '@mui/material';
 
 export function ProductsView() {
-  const [sortBy, setSortBy] = useState('featured');
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('');
+  const [amount, setAmount] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [expenses, setExpenses] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const [openFilter, setOpenFilter] = useState(false);
+  const token = localStorage.getItem('token'); // access_token do login
+  const userId = localStorage.getItem('user_id'); // id do usuário logado
 
-  const [filters, setFilters] = useState<FiltersProps>(defaultFilters);
+  // Supabase public info
+  const SUPABASE_URL = "https://xhetvaflxvoxllspoimz.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhoZXR2YWZseHZveGxsc3BvaW16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1NTg3NDksImV4cCI6MjA3NzEzNDc0OX0.lkyrirrQm31gnDUAmB4lETpb0pHGGBaM3i32R9FkSrk"; // ou NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  const handleOpenFilter = useCallback(() => {
-    setOpenFilter(true);
-  }, []);
+  const fetchExpenses = useCallback(async () => {
+  if (!token || !userId) return;
 
-  const handleCloseFilter = useCallback(() => {
-    setOpenFilter(false);
-  }, []);
+  try {
+    setLoading(true);
+    const res = await fetch(
+  `${SUPABASE_URL}/rest/v1/expenses?user_id=eq.${userId}&order=date.desc&select=*`,
+  { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` } }
+);
 
-  const handleSort = useCallback((newSort: string) => {
-    setSortBy(newSort);
-  }, []);
+    const data = await res.json();
+    setExpenses(data);
+    setLoading(false);
+  } catch (err) {
+    console.error(err);
+    setError('Erro ao carregar despesas');
+    setLoading(false);
+  }
+}, [token, userId]);
 
-  const handleSetFilters = useCallback((updateState: Partial<FiltersProps>) => {
-    setFilters((prevValue) => ({ ...prevValue, ...updateState }));
-  }, []);
+  const handleAddExpense = async () => {
+    if (!title || !category || !amount) {
+      setError('Preencha todos os campos');
+      return;
+    }
 
-  const canReset = Object.keys(filters).some(
-    (key) => filters[key as keyof FiltersProps] !== defaultFilters[key as keyof FiltersProps]
-  );
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/expenses`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${token}`,
+          Prefer: "return=representation",
+        },
+        body: JSON.stringify([
+          {
+            title,
+            category,
+            amount: parseFloat(amount),
+            user_id: userId,
+            date: new Date().toISOString(),
+          },
+        ]),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setExpenses(prev => [data[0], ...prev]);
+        setTitle("");
+        setCategory("");
+        setAmount("");
+        setError(null);
+      } else {
+        console.error(data);
+        setError("Erro ao adicionar gasto");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Erro ao adicionar gasto");
+    }
+  };
+
+  useEffect(() => {
+    fetchExpenses();
+  }, [fetchExpenses]);
 
   return (
-    <DashboardContent>
-      <CartIcon totalItems={8} />
-
-      <Typography variant="h4" sx={{ mb: 5 }}>
-        Products
+    <Box>
+      <Typography variant="h4" sx={{ mb: 3 }}>
+        Gastos Mensais
       </Typography>
-      <Box
-        sx={{
-          mb: 5,
-          display: 'flex',
-          alignItems: 'center',
-          flexWrap: 'wrap-reverse',
-          justifyContent: 'flex-end',
-        }}
-      >
-        <Box
-          sx={{
-            my: 1,
-            gap: 1,
-            flexShrink: 0,
-            display: 'flex',
-          }}
-        >
-          <ProductFilters
-            canReset={canReset}
-            filters={filters}
-            onSetFilters={handleSetFilters}
-            openFilter={openFilter}
-            onOpenFilter={handleOpenFilter}
-            onCloseFilter={handleCloseFilter}
-            onResetFilter={() => setFilters(defaultFilters)}
-            options={{
-              genders: GENDER_OPTIONS,
-              categories: CATEGORY_OPTIONS,
-              ratings: RATING_OPTIONS,
-              price: PRICE_OPTIONS,
-              colors: COLOR_OPTIONS,
-            }}
-          />
 
-          <ProductSort
-            sortBy={sortBy}
-            onSort={handleSort}
-            options={[
-              { value: 'featured', label: 'Featured' },
-              { value: 'newest', label: 'Newest' },
-              { value: 'priceDesc', label: 'Price: High-Low' },
-              { value: 'priceAsc', label: 'Price: Low-High' },
-            ]}
-          />
-        </Box>
+      <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+        <TextField
+          label="Título"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+        />
+        <TextField
+          label="Categoria"
+          value={category}
+          onChange={e => setCategory(e.target.value)}
+        />
+        <TextField
+          label="Valor"
+          type="number"
+          value={amount}
+          onChange={e => setAmount(e.target.value)}
+        />
+        <Button variant="contained" onClick={handleAddExpense}>
+          Adicionar
+        </Button>
       </Box>
 
-      <Grid container spacing={3}>
-        {_products.map((product) => (
-          <Grid key={product.id} size={{ xs: 12, sm: 6, md: 3 }}>
-            <ProductItem product={product} />
-          </Grid>
-        ))}
-      </Grid>
+      {error && (
+        <Typography color="error" sx={{ mb: 2 }}>
+          {error}
+        </Typography>
+      )}
 
-      <Pagination count={10} color="primary" sx={{ mt: 8, mx: 'auto' }} />
-    </DashboardContent>
+      <Paper>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Título</TableCell>
+              <TableCell>Categoria</TableCell>
+              <TableCell>Valor</TableCell>
+              <TableCell>Data</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={4} align="center">
+                  Carregando...
+                </TableCell>
+              </TableRow>
+            ) : expenses.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={4} align="center">
+                  Nenhum gasto registrado
+                </TableCell>
+              </TableRow>
+            ) : (
+              expenses.map((e: any) => (
+                <TableRow key={e.id}>
+                  <TableCell>{e.title}</TableCell>
+                  <TableCell>{e.category}</TableCell>
+                  <TableCell>R$ {parseFloat(e.amount).toFixed(2)}</TableCell>
+                  <TableCell>{new Date(e.date).toLocaleDateString()}</TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </Paper>
+    </Box>
   );
 }
