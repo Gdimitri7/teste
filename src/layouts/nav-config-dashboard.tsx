@@ -18,14 +18,15 @@ export const navData = [
     path: '/',
     icon: icon('ic-analytics'),
   },
-  {
-    title: 'User',
-    path: '/user',
-    icon: icon('ic-user'),
-  },
+{
+  title: 'Relatório',
+  path: '/report',       // rota para a página de report
+  icon: icon('ic-chart'), // use um ícone que faça sentido, tipo gráfico
+}
+  ,
   {
     title: 'Product',
-    path: '/products',
+    path: '/expense',
     icon: icon('ic-cart'),
     info: (
       <Label color="error" variant="inverted">

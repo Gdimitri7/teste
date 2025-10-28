@@ -1,77 +1,75 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+
+interface User {
+  id: string;
+  email: string;
+  phone: string | null;
+  user_metadata: any;
+  created_at: string;
+}
 
 export function BlogView() {
-  const [noPosition, setNoPosition] = useState({ top: '50%', left: '50%' });
-  const [showCongrats, setShowCongrats] = useState(false);
+  const [users, setUsers] = useState<User[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleNoClick = () => {
-    // Gera posição aleatória para o botão 'Não'
-    const top = Math.floor(Math.random() * 80) + 10 + '%';
-    const left = Math.floor(Math.random() * 80) + 10 + '%';
-    setNoPosition({ top, left });
-  };
+  const SUPABASE_URL = 'https://xhetvaflxvoxllspoimz.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhoZXR2YWZseHZveGxsc3BvaW16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1NTg3NDksImV4cCI6MjA3NzEzNDc0OX0.lkyrirrQm31gnDUAmB4lETpb0pHGGBaM3i32R9FkSrk';
 
-  const handleYesClick = () => {
-    setShowCongrats(true);
-  };
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/auth/v1/users`, {
+          headers: {
+            apikey: SUPABASE_ANON_KEY,
+            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          },
+        });
 
-  if (showCongrats) {
-    return (
-      <Box
-        sx={{
-          height: '100vh',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          flexDirection: 'column',
-        }}
-      >
-        <Typography variant="h2" color="primary">
-          Parabéns! 💖
-        </Typography>
-        <Typography variant="h5">Você disse sim! 🥰</Typography>
-      </Box>
-    );
-  }
+        const data = await res.json();
+
+        if (res.ok) {
+          setUsers(data);
+        } else {
+          console.error('Erro:', data);
+          setError('Erro ao buscar usuários');
+        }
+      } catch (err) {
+        console.error(err);
+        setError('Erro ao buscar usuários');
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   return (
-    <Box
-      sx={{
-        height: '100vh',
-        position: 'relative',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        gap: 3,
-      }}
-    >
-      <Typography variant="h4">Me daria seu anel?</Typography>
-      <Box sx={{ position: 'relative', width: '100%', height: '100px' }}>
-        <Button
-          variant="contained"
-          color="success"
-          onClick={handleYesClick}
-          sx={{ mr: 2 }}
-        >
-          Sim
-        </Button>
-        <Button
-          variant="contained"
-          color="error"
-          onClick={handleNoClick}
-          sx={{
-            position: 'absolute',
-            top: noPosition.top,
-            left: noPosition.left,
-            transition: '0.2s',
-          }}
-        >
-          Não
-        </Button>
-      </Box>
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h4" sx={{ mb: 3 }}>Lista de Usuários</Typography>
+      {error && <Typography color="error">{error}</Typography>}
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>ID</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Nome</TableCell>
+              <TableCell>Criado em</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {users.map(u => (
+              <TableRow key={u.id}>
+                <TableCell>{u.id}</TableCell>
+                <TableCell>{u.email}</TableCell>
+                <TableCell>{u.user_metadata?.full_name || '-'}</TableCell>
+                <TableCell>{new Date(u.created_at).toLocaleDateString()}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Box>
   );
 }

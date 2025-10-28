@@ -1,15 +1,17 @@
 import { CONFIG } from 'src/config-global';
 
-import { UserView } from 'src/sections/user/view';
+import { AddExpenseView } from 'src/sections/expenses/AddExpenseView';
 
 // ----------------------------------------------------------------------
 
 export default function Page() {
   return (
     <>
-      <title>{`Users - ${CONFIG.appName}`}</title>
+      <title>{`Products - ${CONFIG.appName}`}</title>
 
-      <UserView />
+      <AddExpenseView />
     </>
   );
 }
+
+
