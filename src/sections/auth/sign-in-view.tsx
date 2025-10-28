@@ -21,28 +21,34 @@ export function SignInView() {
   const [password, setPassword] = useState('@demo1234');
   const [error, setError] = useState<string | null>(null);
 
-  const handleSignIn = useCallback(async () => {
-    try {
-      const res = await fetch('https://back-h8e9.onrender.com/auth/login', {
+const handleSignIn = useCallback(async () => {
+  try {
+    const res = await fetch(
+      'https://xhetvaflxvoxllspoimz.supabase.co/auth/v1/token?grant_type=password',
+      {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: email, password })
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        console.log('Token recebido:', data.token);
-        localStorage.setItem('token', data.token);
-        router.push('/dashboard'); // redireciona para home
-      } else {
-        setError(data.error);
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhoZXR2YWZseHZveGxsc3BvaW16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1NTg3NDksImV4cCI6MjA3NzEzNDc0OX0.lkyrirrQm31gnDUAmB4lETpb0pHGGBaM3i32R9FkSrk', // sua anon key
+        },
+        body: JSON.stringify({ email, password }),
       }
-    } catch (err) {
-      console.error('Falha na requisição:', err);
-      setError('Erro de conexão com o servidor');
+    );
+
+    const data = await res.json();
+
+    if (res.ok) {
+      console.log('Access Token recebido:', data.access_token);
+      localStorage.setItem('token', data.access_token);
+      router.push('/dashboard'); // redireciona para home
+    } else {
+      setError(data.error_description || data.msg || 'Erro ao fazer login');
     }
-  }, [email, password, router]);
+  } catch (err) {
+    console.error('Falha na requisição:', err);
+    setError('Erro de conexão com o servidor');
+  }
+}, [email, password, router]);
 
   const renderForm = (
     <Box
