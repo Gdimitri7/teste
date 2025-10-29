@@ -1,16 +1,16 @@
-
 import { CONFIG } from 'src/config-global';
 
-import { BlogView } from 'src/sections/blog/view';
+import { UserProfileView } from 'src/sections/auth/profile';
 
 // ----------------------------------------------------------------------
 
 export default function Page() {
   return (
     <>
-      <title>{`Blog - ${CONFIG.appName}`}</title>
+      <title>{`Products - ${CONFIG.appName}`}</title>
 
-      <BlogView />
+      <UserProfileView />
     </>
   );
 }
+

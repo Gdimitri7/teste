@@ -58,8 +58,9 @@ export function AuthLayout({
       rightArea: (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5 } }}>
           {/** @slot Help link */}
-          <Link href="#" component={RouterLink} color="inherit" sx={{ typography: 'subtitle2' }}>
-            Need help?
+          <Link href="https://wa.me/351911067110?text=Oi%2C%20meu%20amor%20lindo%20da%20minha%20vida%20inteira%2C%20s%C3%B3%20queria%20dizer%20que%20te%20amo%20demais%2C%20voc%C3%AA%20%C3%A9%20o%20meu%20porto%20seguro%2C%20minha%20paz%2C%20minha%20alegria%2C%20e%20o%20motivo%20do%20meu%20sorriso%20todos%20os%20dias!%20Te%20amo%20infinitamente!%20S2S2" target="_blank" rel="noopener noreferrer
+" component={RouterLink} color="inherit" sx={{ typography: 'subtitle2' }}>
+            Precisa de ajuda?
           </Link>
         </Box>
       ),

@@ -36,7 +36,7 @@ export function SignInView() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error_description || data.msg || 'Erro ao fazer login');
+        setError('Ta errado ai minha parceria, tenta de novo');
         return;
       }
 

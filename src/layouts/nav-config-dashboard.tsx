@@ -15,24 +15,13 @@ export type NavItem = {
 export const navData = [
   {
     title: 'Dashboard',
-    path: '/',
+    path: '/dashboard',
     icon: icon('ic-analytics'),
   },
-{
-  title: 'Relatório',
-  path: '/report',       // rota para a página de report
-  icon: icon('ic-chart'), // use um ícone que faça sentido, tipo gráfico
-}
-  ,
   {
-    title: 'Product',
+    title: 'Pagamentos',
     path: '/expense',
-    icon: icon('ic-cart'),
-    info: (
-      <Label color="error" variant="inverted">
-        +3
-      </Label>
-    ),
+    icon: icon('ic-conta'),
   },
   {
     title: 'Blog',
@@ -44,9 +33,9 @@ export const navData = [
     path: '/sign-in',
     icon: icon('ic-lock'),
   },
-  {
-    title: 'Not found',
-    path: '/404',
-    icon: icon('ic-disabled'),
-  },
+{
+  title: 'Relatório',
+  path: '/report',       // rota para a página de report
+  icon: icon('ic-reports'), // use um ícone que faça sentido, tipo gráfico
+}
 ];
