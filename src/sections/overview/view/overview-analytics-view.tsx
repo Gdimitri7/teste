@@ -1,22 +1,108 @@
+import { useEffect, useState, useMemo } from 'react';
+
+import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
 import { DashboardContent } from 'src/layouts/dashboard';
-import { _posts, _tasks, _traffic, _timeline } from 'src/_mock';
 
-import { AnalyticsNews } from '../analytics-news';
-import { AnalyticsTasks } from '../analytics-tasks';
-import { AnalyticsCurrentVisits } from '../analytics-current-visits';
-import { AnalyticsOrderTimeline } from '../analytics-order-timeline';
-import { AnalyticsWebsiteVisits } from '../analytics-website-visits';
 import { AnalyticsWidgetSummary } from '../analytics-widget-summary';
-import { AnalyticsTrafficBySite } from '../analytics-traffic-by-site';
-import { AnalyticsCurrentSubject } from '../analytics-current-subject';
-import { AnalyticsConversionRates } from '../analytics-conversion-rates';
 
-// ----------------------------------------------------------------------
+interface Expense {
+  id: string;
+  title: string;
+  category: string;
+  amount: number;
+  date: string;
+  paid_by: string;
+}
+
+interface EventRow {
+  id: string;
+  title: string;
+  description?: string | null;
+  date: string; // 'YYYY-MM-DD'
+  time: string; // 'HH:MM:SS'
+}
 
 export function OverviewAnalyticsView() {
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [events, setEvents] = useState<EventRow[]>([]);
+
+  const SUPABASE_URL = 'https://xhetvaflxvoxllspoimz.supabase.co';
+  const SUPABASE_ANON_KEY =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhoZXR2YWZseHZveGxsc3BvaW16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1NTg3NDksImV4cCI6MjA3NzEzNDc0OX0.lkyrirrQm31gnDUAmB4lETpb0pHGGBaM3i32R9FkSrk';
+
+  // Buscar despesas
+  const fetchExpenses = async () => {
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/expenses?order=date.desc`, {
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+      });
+      const data = await res.json();
+      setExpenses(data);
+    } catch (err) {
+      console.error(err);
+      setExpenses([]);
+    }
+  };
+
+  // Buscar eventos
+  const fetchEvents = async () => {
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/events?order=date.asc&order=time.asc`, {
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+      });
+      const data = await res.json();
+      setEvents(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error(err);
+      setEvents([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchExpenses();
+    fetchEvents();
+  }, []);
+
+  // Gastos Semanais
+  const weeklyExpensesTotal = useMemo(() => {
+    const now = new Date();
+    const day = now.getDay();
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - (day === 0 ? 6 : day - 1));
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    return expenses
+      .filter(e => new Date(e.date) >= startOfWeek)
+      .reduce((acc, e) => acc + e.amount, 0);
+  }, [expenses]);
+
+  // Próximo evento
+  const nextEvent = useMemo(() => {
+    const today = new Date();
+    const futureEvents = events
+      .map(e => ({ ...e, eventDate: new Date(`${e.date}T${e.time}`) }))
+      .filter(e => e.eventDate >= today)
+      .sort((a, b) => a.eventDate.getTime() - b.eventDate.getTime());
+    return futureEvents[0] || null;
+  }, [events]);
+
+  const daysUntilNextEvent = useMemo(() => {
+    if (!nextEvent) return 0;
+    const diffTime = nextEvent.eventDate.getTime() - new Date().getTime();
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }, [nextEvent]);
+
+  const formatDate = (d: Date) => d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' });
+
   return (
     <DashboardContent maxWidth="xl">
       <Typography variant="h4" sx={{ mb: { xs: 3, md: 5 } }}>
@@ -24,34 +110,46 @@ export function OverviewAnalyticsView() {
       </Typography>
 
       <Grid container spacing={3}>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        {/* Gastos Semanais */}
+<Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <AnalyticsWidgetSummary
-            title="Weekly sales"
-            percent={2.6}
-            total={714000}
-            icon={<img alt="Weekly sales" src="/assets/icons/glass/ic-glass-bag.svg" />}
+            title="Gastos Semanais"
+            total={weeklyExpensesTotal}
+            percent={0}
+            color="warning"
+            icon={<img alt="Gastos Semanais" src="/assets/icons/glass/ic-glass-money.svg" />}
             chart={{
-              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-              series: [22, 8, 35, 50, 82, 84, 77, 12],
+              categories: expenses.map(e => e.category),
+              series: expenses.map(e => e.amount),
             }}
           />
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        {/* Dias até próximo evento */}
+<Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <AnalyticsWidgetSummary
-            title="New users"
-            percent={-0.1}
-            total={1352831}
-            color="secondary"
-            icon={<img alt="New users" src="/assets/icons/glass/ic-glass-users.svg" />}
+            title={nextEvent ? ` ${nextEvent.title}` : 'Próximo Evento'}
+            total={daysUntilNextEvent}
+            percent={0}
+            color="info"
+            icon={<img alt="Evento" src="/assets/icons/glass/ic-glass-event.svg" />}
             chart={{
-              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-              series: [56, 47, 40, 62, 73, 30, 23, 54],
+              categories: ['Dias'],
+              series: [daysUntilNextEvent],
             }}
-          />
+          >
+            {nextEvent && (
+              <Box sx={{ mt: 1 }}>
+                <Typography variant="caption" color="text.secondary">
+                  {formatDate(nextEvent.eventDate)}
+                </Typography>
+              </Box>
+            )}
+          </AnalyticsWidgetSummary>
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        {/* Mantém os demais cards */}
+<Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <AnalyticsWidgetSummary
             title="Purchase orders"
             percent={2.8}
@@ -65,7 +163,7 @@ export function OverviewAnalyticsView() {
           />
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+<Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <AnalyticsWidgetSummary
             title="Messages"
             percent={3.6}
@@ -77,78 +175,6 @@ export function OverviewAnalyticsView() {
               series: [56, 30, 23, 54, 47, 40, 62, 73],
             }}
           />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          <AnalyticsCurrentVisits
-            title="Current visits"
-            chart={{
-              series: [
-                { label: 'America', value: 3500 },
-                { label: 'Asia', value: 2500 },
-                { label: 'Europe', value: 1500 },
-                { label: 'Africa', value: 500 },
-              ],
-            }}
-          />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6, lg: 8 }}>
-          <AnalyticsWebsiteVisits
-            title="Website visits"
-            subheader="(+43%) than last year"
-            chart={{
-              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
-              series: [
-                { name: 'Team A', data: [43, 33, 22, 37, 67, 68, 37, 24, 55] },
-                { name: 'Team B', data: [51, 70, 47, 67, 40, 37, 24, 70, 24] },
-              ],
-            }}
-          />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6, lg: 8 }}>
-          <AnalyticsConversionRates
-            title="Conversion rates"
-            subheader="(+43%) than last year"
-            chart={{
-              categories: ['Italy', 'Japan', 'China', 'Canada', 'France'],
-              series: [
-                { name: '2022', data: [44, 55, 41, 64, 22] },
-                { name: '2023', data: [53, 32, 33, 52, 13] },
-              ],
-            }}
-          />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          <AnalyticsCurrentSubject
-            title="Current subject"
-            chart={{
-              categories: ['English', 'History', 'Physics', 'Geography', 'Chinese', 'Math'],
-              series: [
-                { name: 'Series 1', data: [80, 50, 30, 40, 100, 20] },
-                { name: 'Series 2', data: [20, 30, 40, 80, 20, 80] },
-                { name: 'Series 3', data: [44, 76, 78, 13, 43, 10] },
-              ],
-            }}
-          />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6, lg: 8 }}>
-          <AnalyticsNews title="News" list={_posts.slice(0, 5)} />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          <AnalyticsOrderTimeline title="Order timeline" list={_timeline} />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          <AnalyticsTrafficBySite title="Traffic by site" list={_traffic} />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6, lg: 8 }}>
-          <AnalyticsTasks title="Tasks" list={_tasks} />
         </Grid>
       </Grid>
     </DashboardContent>

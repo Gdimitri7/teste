@@ -18,6 +18,7 @@ export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const ExpensesPage = lazy(() => import('src/pages/expense'));
 export const ReportPage = lazy(() => import('src/pages/reports'));
 export const UserProfilePage = lazy(() => import('src/pages/profile'));
+export const AgendaPage = lazy(() => import('src/pages/agenda'))
 
 const renderFallback = () => (
   <Box
@@ -62,6 +63,7 @@ export const routesSection: RouteObject[] = [
       { path: 'profile', element: <UserProfilePage /> },
       { path: 'expense', element: <ExpensesPage/> },
       { path: 'report', element: <ReportPage /> },
+      { path: 'agenda', element: <AgendaPage/> }
     ],
   },
 ];
