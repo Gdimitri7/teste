@@ -129,6 +129,7 @@ export function DashboardLayout({
           [`& .${layoutClasses.sidebarContainer}`]: {
             [theme.breakpoints.up(layoutQuery)]: {
               pl: 'var(--layout-nav-vertical-width)',
+
               transition: theme.transitions.create(['padding-left'], {
                 easing: 'var(--layout-transition-easing)',
                 duration: 'var(--layout-transition-duration)',

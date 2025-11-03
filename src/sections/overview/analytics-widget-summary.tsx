@@ -92,7 +92,6 @@ export function AnalyticsWidgetSummary({
           position: 'relative',
           color: `${color}.darker`,
           backgroundColor: 'common.white',
-          backgroundImage: `linear-gradient(135deg, ${varAlpha(theme.vars.palette[color].lighterChannel, 0.48)}, ${varAlpha(theme.vars.palette[color].lightChannel, 0.48)})`,
         }),
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}

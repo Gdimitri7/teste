@@ -1,17 +1,15 @@
 import { CONFIG } from 'src/config-global';
 
-import { AgendaView } from 'src/sections/agenda/agenda';
+import { StocksView } from 'src/sections/stock/stocks';
 
 // ----------------------------------------------------------------------
 
 export default function Page() {
   return (
     <>
-      <title>{`Agenda - ${CONFIG.appName}`}</title>
+      <title>{`Chat - ${CONFIG.appName}`}</title>
 
-      <AgendaView />
+      <StocksView />
     </>
   );
 }
-
-

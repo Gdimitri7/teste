@@ -1,17 +1,15 @@
 import { CONFIG } from 'src/config-global';
 
-import { AgendaView } from 'src/sections/agenda/agenda';
+import { ChatView } from 'src/sections/chat/chat';
 
 // ----------------------------------------------------------------------
 
 export default function Page() {
   return (
     <>
-      <title>{`Agenda - ${CONFIG.appName}`}</title>
+      <title>{`Chat - ${CONFIG.appName}`}</title>
 
-      <AgendaView />
+      <ChatView />
     </>
   );
 }
-
-

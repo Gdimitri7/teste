@@ -18,7 +18,12 @@ export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const ExpensesPage = lazy(() => import('src/pages/expense'));
 export const ReportPage = lazy(() => import('src/pages/reports'));
 export const UserProfilePage = lazy(() => import('src/pages/profile'));
-export const AgendaPage = lazy(() => import('src/pages/agenda'))
+export const AgendaPage = lazy(() => import('src/pages/agenda'));
+export const VisionPage = lazy(() => import('src/pages/vision'));
+export const Chatpage = lazy(() => import('src/pages/chat'))
+export const StockPage = lazy(() => import('src/pages/stock'))
+
+
 
 const renderFallback = () => (
   <Box
@@ -63,7 +68,11 @@ export const routesSection: RouteObject[] = [
       { path: 'profile', element: <UserProfilePage /> },
       { path: 'expense', element: <ExpensesPage/> },
       { path: 'report', element: <ReportPage /> },
-      { path: 'agenda', element: <AgendaPage/> }
+      { path: 'agenda', element: <AgendaPage/> },
+      { path: 'vision', element: <VisionPage/>},
+      { path: 'chat', element: <Chatpage/>},
+      { path: 'stock', element: <StockPage/>}
+
     ],
   },
 ];

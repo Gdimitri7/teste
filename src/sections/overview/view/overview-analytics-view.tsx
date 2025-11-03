@@ -6,6 +6,8 @@ import Typography from '@mui/material/Typography';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
+import { SvgColor } from 'src/components/svg-color';
+
 import { AnalyticsWidgetSummary } from '../analytics-widget-summary';
 
 interface Expense {
@@ -105,10 +107,6 @@ export function OverviewAnalyticsView() {
 
   return (
     <DashboardContent maxWidth="xl">
-      <Typography variant="h4" sx={{ mb: { xs: 3, md: 5 } }}>
-        Hi, Welcome back 👋
-      </Typography>
-
       <Grid container spacing={3}>
         {/* Gastos Semanais */}
 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -117,7 +115,11 @@ export function OverviewAnalyticsView() {
             total={weeklyExpensesTotal}
             percent={0}
             color="warning"
-            icon={<img alt="Gastos Semanais" src="/assets/icons/glass/ic-glass-money.svg" />}
+ icon={<SvgColor src="/assets/icons/navbar/ic-conta.svg" sx={{ color: '#fff', width: 50, height: 50 }} />} 
+            sx={{
+    bgcolor: '#a3c9a7 ', // vermelho rosa custom
+    color: '#fff',
+  }}           
             chart={{
               categories: expenses.map(e => e.category),
               series: expenses.map(e => e.amount),
@@ -131,8 +133,11 @@ export function OverviewAnalyticsView() {
             title={nextEvent ? ` ${nextEvent.title}` : 'Próximo Evento'}
             total={daysUntilNextEvent}
             percent={0}
-            color="info"
-            icon={<img alt="Evento" src="/assets/icons/glass/ic-glass-event.svg" />}
+ icon={<SvgColor src="/assets/icons/navbar/ic-agenda.svg" sx={{ color: '#fff', width: 50, height: 50 }} />} 
+             sx={{
+    bgcolor: '#ffb353', // vermelho rosa custom
+    color: '#fff',
+  }}
             chart={{
               categories: ['Dias'],
               series: [daysUntilNextEvent],
@@ -154,8 +159,12 @@ export function OverviewAnalyticsView() {
             title="Purchase orders"
             percent={2.8}
             total={1723315}
-            color="warning"
-            icon={<img alt="Purchase orders" src="/assets/icons/glass/ic-glass-buy.svg" />}
+            
+ icon={<SvgColor src="/assets/icons/navbar/ic-agenda.svg" sx={{ color: '#fff', width: 50, height: 50 }} />}            
+ sx={{
+    bgcolor: '#ff6e4a', // vermelho rosa custom
+    color: '#fff',
+  }}
             chart={{
               categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
               series: [40, 70, 50, 28, 70, 75, 7, 64],
@@ -168,7 +177,10 @@ export function OverviewAnalyticsView() {
             title="Messages"
             percent={3.6}
             total={234}
-            color="error"
+            sx={{
+    bgcolor: '#5c5259', // vermelho rosa custom
+    color: '#fff',
+  }}
             icon={<img alt="Messages" src="/assets/icons/glass/ic-glass-message.svg" />}
             chart={{
               categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],

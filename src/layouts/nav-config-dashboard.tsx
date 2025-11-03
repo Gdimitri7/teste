@@ -10,32 +10,55 @@ export type NavItem = {
   path: string;
   icon: React.ReactNode;
   info?: React.ReactNode;
+  textColor?: string;
 };
 
 export const navData = [
   {
     title: 'Dashboard',
     path: '/dashboard',
-    icon: icon('ic-analytics'),
+    icon: icon('ic-dash'),
+    textColor: '#5c5259' 
   },
   {
     title: 'Pagamentos',
     path: '/expense',
     icon: icon('ic-conta'),
+    textColor: '#5c5259' 
+
+  },
+   {
+    title: 'Investimentos',
+    path: '/stock',
+    icon: icon('ic-conta'),
+    textColor: '#5c5259' 
+
   },
   {
-    title: 'Blog',
-    path: '/blog',
-    icon: icon('ic-blog'),
+    title: 'Vision Board',
+    path: '/vision',
+    icon: icon('ic-vision'),
+    textColor: '#5c5259'
+    
   },
   {
     title: 'Agenda',
     path: '/agenda',
-    icon: icon('ic-lock'),
+    icon: icon('ic-agenda'),
+    textColor: '#5c5259'
+  
   },
+  {
+  title: 'Chat',
+  path: '/chat',       
+  icon: icon('ic-chat'),
+  textColor: '#5c5259' 
+},
 {
   title: 'Relatório',
-  path: '/report',       // rota para a página de report
-  icon: icon('ic-reports'), // use um ícone que faça sentido, tipo gráfico
-}
+  path: '/report',       
+  icon: icon('ic-reports'),
+  textColor: '#5c5259' 
+},
+
 ];

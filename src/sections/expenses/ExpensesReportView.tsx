@@ -168,7 +168,7 @@ export function ExpensesReportView() {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Box sx={{ p: 3 }}>
+      <Box sx={{ p: 3,color: '#a3c9a7'}}>
         <Typography variant="h4" sx={{ mb: 3 }}>
           Relatório de Gastos
         </Typography>
@@ -203,9 +203,20 @@ export function ExpensesReportView() {
             ))}
           </TextField>
 
-          <Button variant="contained" onClick={fetchExpenses}>
-            Atualizar
-          </Button>
+          <Button
+  variant="contained"
+  onClick={fetchExpenses}
+  sx={{
+    bgcolor: '#ffb353', // fundo
+    color: '#fff',       // texto
+    '&:hover': {
+      bgcolor: '#fadab3ff', // hover
+    },
+  }}
+>
+  Atualizar
+</Button>
+
         </Box>
 
         {error && (
@@ -214,7 +225,7 @@ export function ExpensesReportView() {
           </Typography>
         )}
 
-        <TableContainer component={Paper} sx={{ mb: 4 }}>
+        <TableContainer component={Paper} sx={{ mb: 4,}}>
           <Table>
             <TableHead>
               <TableRow>

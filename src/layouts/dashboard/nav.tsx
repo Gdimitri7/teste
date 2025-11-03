@@ -116,7 +116,7 @@ export function NavContent({ data, slots, workspaces, sx }: NavContentProps) {
       {slots?.topArea}
 
       <WorkspacesPopover data={workspaces} sx={{ my: 2 }} />
-
+      
       <Scrollbar fillContent>
         <Box
           component="nav"
@@ -143,31 +143,30 @@ export function NavContent({ data, slots, workspaces, sx }: NavContentProps) {
               return (
                 <ListItem disableGutters disablePadding key={item.title}>
                   <ListItemButton
-                    disableGutters
-                    component={RouterLink}
-                    href={item.path}
-                    sx={[
-                      (theme) => ({
-                        pl: 2,
-                        py: 1,
-                        gap: 2,
-                        pr: 1.5,
-                        borderRadius: 0.75,
-                        typography: 'body2',
-                        fontWeight: 'fontWeightMedium',
-                        color: theme.vars.palette.text.secondary,
-                        minHeight: 44,
-                        ...(isActived && {
-                          fontWeight: 'fontWeightSemiBold',
-                          color: theme.vars.palette.primary.main,
-                          bgcolor: varAlpha(theme.vars.palette.primary.mainChannel, 0.08),
-                          '&:hover': {
-                            bgcolor: varAlpha(theme.vars.palette.primary.mainChannel, 0.16),
-                          },
-                        }),
-                      }),
-                    ]}
-                  >
+  disableGutters
+  component={RouterLink}
+  href={item.path}
+  sx={(theme) => ({
+    pl: 2,
+    py: 1,
+    gap: 2,
+    pr: 1.5,
+    borderRadius: 0.75,
+    typography: 'body2',
+    fontWeight: 'fontWeightMedium',
+    color: item.textColor || theme.vars.palette.text.secondary,
+    minHeight: 44,
+    ...(isActived && {
+      fontWeight: 'fontWeightSemiBold',
+      color: item.textColor || theme.vars.palette.primary.main,
+      bgcolor: varAlpha(theme.vars.palette.primary.mainChannel, 0.08),
+      '&:hover': {
+        bgcolor: varAlpha(theme.vars.palette.primary.mainChannel, 0.16),
+      },
+    }),
+  })}
+>
+
                     <Box component="span" sx={{ width: 24, height: 24 }}>
                       {item.icon}
                     </Box>

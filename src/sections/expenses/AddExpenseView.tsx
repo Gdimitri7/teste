@@ -63,8 +63,8 @@ export function AddExpenseView() {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Box sx={{ p:3 }}>
-        <Typography variant="h4" sx={{ mb:3 }}>Adicionar Gasto</Typography>
+      <Box sx={{ p:3, color: '#a3c9a7' }}>
+        <Typography variant="h4" sx={{ mb:3,  color: '#a3c9a7' }}>Adicionar Gasto</Typography>
 
         <Box sx={{ display:'flex', gap:2, flexWrap:'wrap', mb:2 }}>
           <TextField label="Título" value={title} onChange={e=>setTitle(e.target.value)} />
@@ -89,7 +89,22 @@ export function AddExpenseView() {
 
         {error && <Typography color="error" sx={{ mb:2 }}>{error}</Typography>}
 
-        <Button variant="contained" onClick={handleAdd}>Adicionar Gasto</Button>
+        <Button
+  variant="contained"
+  onClick={handleAdd}
+  sx={{
+    bgcolor: '#ffb353', // fundo
+    color: '#fff',       // texto
+    '&:hover': {
+      bgcolor: '#fadab3ff', // hover   // cor ao passar o mouse
+    },
+    borderRadius: 2,           // borda arredondada opcional
+    px: 3,                     // padding horizontal
+  }}
+>
+  + Gasto
+</Button>
+
       </Box>
     </LocalizationProvider>
   );

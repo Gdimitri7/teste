@@ -7,7 +7,7 @@ import { UserProfileView } from 'src/sections/auth/profile';
 export default function Page() {
   return (
     <>
-      <title>{`Products - ${CONFIG.appName}`}</title>
+      <title>{`Perfil - ${CONFIG.appName}`}</title>
 
       <UserProfileView />
     </>

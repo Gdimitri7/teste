@@ -1,17 +1,16 @@
 import { CONFIG } from 'src/config-global';
 
-import { AgendaView } from 'src/sections/agenda/agenda';
+import { VisionBoardView } from 'src/sections/visionboard/vision';
 
 // ----------------------------------------------------------------------
 
 export default function Page() {
   return (
     <>
-      <title>{`Agenda - ${CONFIG.appName}`}</title>
+      <title>{`Vision - ${CONFIG.appName}`}</title>
 
-      <AgendaView />
+      <VisionBoardView />
     </>
   );
 }
-
 
