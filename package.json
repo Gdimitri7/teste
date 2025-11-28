@@ -43,7 +43,7 @@
     "@mui/icons-material": "^7.3.4",
     "@mui/lab": "^7.0.0-beta.10",
     "@mui/material": "^7.0.1",
-    "@mui/x-date-pickers": "^8.15.0",
+    "@mui/x-date-pickers": "^8.19.0",
     "@supabase/supabase-js": "^2.78.0",
     "apexcharts": "^4.5.0",
     "date-fns": "^4.1.0",
